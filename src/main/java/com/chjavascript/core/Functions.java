@@ -12,6 +12,8 @@ import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.AbstractFunction;
 import com.laytonsmith.core.functions.Exceptions;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -56,19 +58,22 @@ public class Functions {
 			if (args.length > 2) {
 				toReturn = Static.getArray(args[2], t);
 			}
-			CArray ret = CArray.GetAssociativeArray(t);			try {
-//				for(String key : env.stringKeySet()){
-//					.set(key, Construct.GetPOJO(env.get(key, t)));
-//				}
+			CArray ret = CArray.GetAssociativeArray(t);
+			Bindings b = engine.createBindings();
+			try {
+				for(String key : env.stringKeySet()){
+					b.put(key, Construct.GetPOJO(env.get(key, t)));
+				}
+				engine.setBindings(b, ScriptContext.GLOBAL_SCOPE);
 				engine.eval(script);
 			} catch(Exception e){
 				throw new ConfigRuntimeException(e.getMessage(), Exceptions.ExceptionType.PluginInternalException, t, e);
 			}
-//			for(Construct key : toReturn.keySet()){
-//				String k = toReturn.get(key, t).val();
-//				Object var = .get(k, Object.class);
-//				ret.set(k, Construct.GetConstruct(var), t);
-//			}
+			for(Construct key : toReturn.keySet()){
+				String k = toReturn.get(key, t).val();
+				Object var = b.get(k);
+				ret.set(k, Construct.GetConstruct(var), t);
+			}
 			return ret;
 		}
 
@@ -81,7 +86,7 @@ public class Functions {
 		}
 
 		public String docs() {
-			return "array {script, environment, toReturn} Runs a javascript script. The script can set variables beforehand with the environment"
+			return "array {script, [environment, [toReturn]]} Runs a javascript script. The script can set variables beforehand with the environment"
 				+ " variable, which should be an associative array mapping variable names to values. Arrays are not directly supported,"
 				+ " as everything is simply passed in as a string. Values can be returned from the script, by giving a list of named values"
 				+ " to toReturn, which will cause those values to be returned as a part of the associative array returned.";
