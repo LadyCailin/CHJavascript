@@ -141,7 +141,7 @@ public class Functions {
 		}
 
 		public String docs() {
-			return "";
+			return "array {} Returns various information about the system's installed javascript engine.";
 		}
 
 		public Version since() {
