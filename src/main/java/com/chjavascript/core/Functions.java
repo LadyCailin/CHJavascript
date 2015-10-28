@@ -6,6 +6,7 @@ import com.laytonsmith.core.CHLog;
 import com.laytonsmith.core.CHVersion;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
+import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
@@ -15,6 +16,7 @@ import com.laytonsmith.core.functions.Exceptions;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 /**
@@ -22,12 +24,24 @@ import javax.script.ScriptEngineManager;
  */
 public class Functions {
 
+	private static ScriptEngine engine;
+	private static final String NO_JAVASCRIPT_MESSAGE = "No javascript engine seems to be installed on this system. The "
+		 + "CHJavascript extension will not work.";
+
+	private static ScriptEngine getEngine(){
+		if(engine == null){
+			ScriptEngineManager factory = new ScriptEngineManager();
+			engine = factory.getEngineByName("JavaScript");
+			if (engine == null) {
+				CHLog.GetLogger().e(CHLog.Tags.EXTENSIONS, NO_JAVASCRIPT_MESSAGE, Target.UNKNOWN);
+			}
+		}
+		return engine;
+	}
+
 	@api
 	public static class javascript extends AbstractFunction {
 
-		private ScriptEngine engine = null;
-		private static final String NO_JAVASCRIPT_MESSAGE = "No javascript engine seems to be installed on this system. The "
-		 + "CHJavascript extension will not work.";
 
 		public Exceptions.ExceptionType[] thrown() {
 			return new Exceptions.ExceptionType[]{};
@@ -42,13 +56,7 @@ public class Functions {
 		}
 
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			if(this.engine == null){
-				ScriptEngineManager factory = new ScriptEngineManager();
-				this.engine = factory.getEngineByName("JavaScript");
-				if (this.engine == null) {
-					CHLog.GetLogger().e(CHLog.Tags.EXTENSIONS, NO_JAVASCRIPT_MESSAGE, Target.UNKNOWN);
-				}
-			}
+			getEngine();
 			String script = args[0].val();
 			CArray env = new CArray(t);
 			CArray toReturn = new CArray(t);
@@ -90,6 +98,50 @@ public class Functions {
 				+ " variable, which should be an associative array mapping variable names to values. Arrays are not directly supported,"
 				+ " as everything is simply passed in as a string. Values can be returned from the script, by giving a list of named values"
 				+ " to toReturn, which will cause those values to be returned as a part of the associative array returned.";
+		}
+
+		public Version since() {
+			return CHVersion.V3_3_1;
+		}
+
+	}
+
+	@api
+	public static class javascript_info extends AbstractFunction {
+
+		public Exceptions.ExceptionType[] thrown() {
+			return null;
+		}
+
+		public boolean isRestricted() {
+			return true;
+		}
+
+		public Boolean runAsync() {
+			return null;
+		}
+
+		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+			CArray ret = new CArray(t);
+			ScriptEngine e = getEngine();
+			ScriptEngineFactory f = e.getFactory();
+			ret.set("name", new CString(f.getEngineName(), t), t);
+			ret.set("version", new CString(f.getEngineVersion(), t), t);
+			ret.set("language_name", new CString(f.getLanguageName(), t), t);
+			ret.set("language_version", new CString(f.getLanguageVersion(), t), t);
+			return ret;
+		}
+
+		public String getName() {
+			return "javascript_info";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{0};
+		}
+
+		public String docs() {
+			return "";
 		}
 
 		public Version since() {
