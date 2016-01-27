@@ -10,6 +10,7 @@ import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
+import com.laytonsmith.core.exceptions.CRE.CREPluginInternalException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.AbstractFunction;
 import com.laytonsmith.core.functions.Exceptions;
@@ -43,8 +44,8 @@ public class Functions {
 	public static class javascript extends AbstractFunction {
 
 
-		public Exceptions.ExceptionType[] thrown() {
-			return new Exceptions.ExceptionType[]{};
+		public Class[] thrown() {
+			return new Class[]{CREPluginInternalException.class};
 		}
 
 		public boolean isRestricted() {
@@ -75,7 +76,7 @@ public class Functions {
 				engine.setBindings(b, ScriptContext.GLOBAL_SCOPE);
 				engine.eval(script);
 			} catch(Exception e){
-				throw new ConfigRuntimeException(e.getMessage(), Exceptions.ExceptionType.PluginInternalException, t, e);
+				throw new CREPluginInternalException(e.getMessage(), t, e);
 			}
 			for(Construct key : toReturn.keySet()){
 				String k = toReturn.get(key, t).val();
@@ -109,8 +110,8 @@ public class Functions {
 	@api
 	public static class javascript_info extends AbstractFunction {
 
-		public Exceptions.ExceptionType[] thrown() {
-			return null;
+		public Class[] thrown() {
+			return new Class[]{};
 		}
 
 		public boolean isRestricted() {
