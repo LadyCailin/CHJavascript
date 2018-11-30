@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.chjavascript</groupId>
 	<artifactId>chjavascript</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>CHJavascript</name>
 	<description>Unlocks the full potential of your server, at runtime by adding a way to run javascript scripts from in game, or elsewhere.</description>
 	<inceptionYear>2015</inceptionYear>
@@ -28,8 +28,8 @@
 	<repositories>
 		<!-- Repository for other dependencies of SK's -->
 		<repository>
-			<id>sk89q-mvn2</id>
-			<url>http://mvn2.sk89q.com/repo</url>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo</url>
 		</repository>
 
 		<!-- Other repositories -->
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>commandhelper</artifactId>
-			<version>3.3.2-SNAPSHOT</version>
+			<version>3.3.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
