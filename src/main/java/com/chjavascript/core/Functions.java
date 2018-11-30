@@ -3,7 +3,7 @@ package com.chjavascript.core;
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.core.CHLog;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CString;
@@ -13,7 +13,8 @@ import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CREPluginInternalException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.AbstractFunction;
-import com.laytonsmith.core.functions.Exceptions;
+import com.laytonsmith.core.natives.interfaces.Mixed;
+
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -56,7 +57,7 @@ public class Functions {
 			return null;
 		}
 
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			getEngine();
 			String script = args[0].val();
 			CArray env = new CArray(t);
@@ -78,7 +79,7 @@ public class Functions {
 			} catch(Exception e){
 				throw new CREPluginInternalException(e.getMessage(), t, e);
 			}
-			for(Construct key : toReturn.keySet()){
+			for(Mixed key : toReturn.keySet()){
 				String k = toReturn.get(key, t).val();
 				Object var = b.get(k);
 				ret.set(k, Construct.GetConstruct(var), t);
@@ -102,7 +103,7 @@ public class Functions {
 		}
 
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -122,7 +123,7 @@ public class Functions {
 			return null;
 		}
 
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			ScriptEngine e = getEngine();
 			ScriptEngineFactory f = e.getFactory();
@@ -146,7 +147,7 @@ public class Functions {
 		}
 
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
