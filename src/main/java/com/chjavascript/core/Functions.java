@@ -2,7 +2,7 @@ package com.chjavascript.core;
 
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.api;
-import com.laytonsmith.core.CHLog;
+import com.laytonsmith.core.MSLog;
 import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
@@ -35,7 +35,7 @@ public class Functions {
 			ScriptEngineManager factory = new ScriptEngineManager();
 			engine = factory.getEngineByName("JavaScript");
 			if (engine == null) {
-				CHLog.GetLogger().e(CHLog.Tags.EXTENSIONS, NO_JAVASCRIPT_MESSAGE, Target.UNKNOWN);
+				MSLog.GetLogger().e(MSLog.Tags.EXTENSIONS, NO_JAVASCRIPT_MESSAGE, Target.UNKNOWN);
 			}
 		}
 		return engine;
